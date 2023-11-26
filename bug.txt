@@ -1,0 +1,136 @@
+Greetings, fellow adventurer! Welcome to my bug log, your essential guide to navigating this vibrant city. While it offers endless opportunities for exploration, it's crucial to 
+remember that building here can be quite treacherous. The creation of such remarkable places often involves overcoming various challenges and obstacles. So, join me as we delve 
+into the intricacies of these challenges and strive to understand them, ensuring that future builders can embark on their journeys with greater ease and knowledge!
+
+Bugs:
+
+CP1:-
+
+A. modex.c
+
+1. int j; ...vs ... for(int j=0;j<(18*320);j++);
+what: When attempting to use a for loop to iterate from 0 to a specified value , the code fails to compile when declaring and initializing the loop counter 'variable' within the for 
+statement itself. Instead, it requires a separate declaration of 'variable' before the loop. The issue restricts the use of the loop counter within the loop scope and can potentially 
+lead to unintended behavior or errors.
+
+2. unsigned int spaces = (40 - strlen(room_name) - strlen(get_typed_command) - 1);
+what: In the given line of code, the calculation of the spaces variable to determine the number of available spaces does not account for the underscore ('_') character that needs 
+to be added to the status bar. As a result, the spaces variable does not allocate enough space for the underscore, potentially leading to incorrect formatting in the status bar.
+
+3. if(strlen(get_typed_command) < 20)
+what: The code does not correctly remove the underscore ('_') character at the end of a line when the length of get_typed_command is less than 20 characters. This behavior can be 
+confusing as it leaves the underscore in place even when it's not needed. The code should check whether the last word has been reached before printing the underscore to ensure 
+correct formatting.
+
+4. for(i = 0; i < 320*18; i++){
+        new_buffer[(i%4)*1440 + i/4] = buffer[i];
+}
+what: While attempting to modify the code to check planes individually and incrementing the address accordingly, an issue arose resulting in inverted text. The code seems to have 
+unintended behavior or logic that causes text inversion. This issue likely arises from the changes made during the attempt to check planes individually.
+So, When modifying the code to check planes individually, it should not result in inverted text. The corrected code should handle the planes correctly and display the text as 
+intended. Please provide the corrected code or further details if available.
+
+5 bug in in line asm
+what: I tried following the way they comment, and i could not see anyting this was less of a techical bug and more of a ASM understanding bug.
+
+6. strcat bug
+what: 
+I encountered several problems while working with the strcat function for string concatenation. Specifically, I faced issues with loading the correct string into my created buffer 
+based on the values of the concatenated string. The problems include:
+
+Buffer Overflows: The strcat function did not perform proper length checks, potentially leading to buffer overflows if the destination buffer was not large enough to accommodate the 
+concatenated string.
+
+String Termination: In some cases, the resulting concatenated string did not have the proper null-termination, making it difficult to handle and manipulate.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+B. text.c 
+
+1. character_ascii = (int)string_of_texts[i];
+what: Learnt the hard whay how these declerations work!
+
+2.  bit_mask = 0x80; Incorrect bit_mask initialization
+what: The bit_mask variable is initialized to 0x80 inside the loop, but it should be initialized outside the loop. Otherwise, it will reset to 0x80 with each iteration, 
+affecting the bitwise operations.
+
+3. New line bug
+what: This one was silly, but not having a new line at the end of text.c threw errors.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+C. modex.h
+
+1. #define SCROLL_Y_DIM    (IMAGE_Y_DIM - 18)
+what: did not account for the bar taking up the 18 space. This restricted the downward maximum movement. Subtle but important 
+bug i caught!
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CP2:-
+
+A. photo.c
+
+1. divide by zero error
+
+What: While attempting to calculate the variable count_inverse in the first loop, I encountered a "divide by zero" error.
+The code calculates count_inverse as 1.0 / Tree.Level4[i].count, and it appears that in some cases, Tree.Level4[i].count is equal to zero, leading to this error.This error
+caused unexpected behavior and crashes.
+
+2. Out of Bounds Access
+
+What: In the same loop where count_inverse is calculated, there is an out-of-bounds array access.
+When setting up the palette, the code attempts to access p->palette[i], but i can be greater than or equal to 4096, which is the size of p->palette.
+
+3. Segmentation fault: I was iterating throught the level4 and for the remaining after the 128 i placed them in level4 again instead of level2. This in my opinion was trying
+to access space that wasnt alooted to it.
+
+4. Mask mistakes: multiple mask mistakes causing my bits to overflow, giving me hardships, pain and wrong color outputs!
+
+
+B. tuxctl-ioctl.c
+
+1. Multiple ACK issues. Thus issues came up witht the stress testing of my led/buttoons. I had to make sure i keep track of an ACK flag 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+C. input.c
+
+1. Multiple mistakes with fd initialization. For this i had to make a copy of my fd, namely fd2 and then use that to call ioctls in my input file and then you might notice on
+my adventure file the actual fd call that lets me get button values fot my tux! This one was a real pain to fix!
+
+2. what: arg1 = (led_timer[3] << 4) | (led_timer[2]); arg0 = (led_timer[1] << 4) | (led_timer[0]);
+
+This was with my LED clock function and i was displaying the wrong things at the wrong place. This problem did stem from 1 of 2 things: Wrong shifts and secpmdly wrong way of placng
+the arguments!
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D. adventure.c
+
+1. The way I call my time function in game loop! again this issue is 2 folded: a] I never had the right inclues which i need to get the actual function i write in the input.h and C
+b] i make a void function that computes the diff = cur_time - start_time; which threw sooooooo many errors, I cant even begin to understand why that happens. Still open to some
+valid reason here.
+
+2. Multiple iseed with fd, like i previously taked about in this log that did creep into my whole adventure problem!
+
+3. This previous problem now goes into a button logic issues. With the result coming in from my TUX_BUTTONS being active high but i was unable to go into my given - keyboard
+cmd logic when logged in as no button press!
+
+This issue was fixed by looking at the status_tread synchrinization to be replicated for my buttons.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Warnigns:
+CP1:
+1.While attempting to resolve warning messages in my code, I encountered a challenging issue caused by inadvertently removing the #include directive for "modex.h" in my "Adventure.C" 
+file. This omission led to numerous implicit declaration errors scattered throughout the codebase. Identifying and addressing these undeclared functions and variables proved to be 
+a painstaking and time-consuming task.
+
+
+CP2:
+1.While working on the codebase of the "SerialTerminal" project, I encountered a warning message related to the declaration of the tty_struct structure. This warning appears in the 
+"serial_driver.c" file and is triggered by a missing include directive.
+
+2. UNDEFINED MAIN REFERNCE: got this beacuse of multiple main defination on my input and adventure.c. Fixed that following instructions and making main 0 in input when i wanted
+to test the whole game. ie.adventure.C
+
+3. Also had multiple inclue issues making a lot of the program not to work.
+
+
+
